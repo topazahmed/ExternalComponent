@@ -10,7 +10,7 @@ declare global {
 
 export default function createExternal(container: any) {
   let shareLinkEventHandler: EventListenerOrEventListenerObject | null = null;
-  let createLinkEventHandler: EventListenerOrEventListenerObject | null = null;
+  let createLinkEventHandler: any = null;
   let copyLinkEventHandler: EventListenerOrEventListenerObject | null = null;
   let shareEmailEventHandler: EventListenerOrEventListenerObject | null = null;
 
@@ -26,14 +26,40 @@ export default function createExternal(container: any) {
   console.log("Custom external react component loaded!");
   var collectionId = location.pathname.split("/").pop();
   console.log("Collection id: " + collectionId);
+  //var popupLoaded = false;
 
   return {
     render: (context: { options: { entityId: any } }) => {
       removeListener();
 
-      shareLinkEventHandler = (event) => {
+      //modal loaded so check the checkbox
+      //console.log("found create link checkbox: " + createExternalLinkButton);
+      createLinkEventHandler = (event: any) => {
+        console.log("Create external link checkbox clicked");
+        window.dataLayer.push({
+          event: "createExternalLinkPublicCollection",
+          definitionName: "createExternalLinkPublicCollection", //event.detail.definitionName,
+          description: "create external link for Public Collection",
+          collectionId: collectionId,
+        });
+      };
+
+      shareLinkEventHandler = async (event) => {
         console.log("Share link button clicked");
-        //window && window.dataLayer &&
+        //popupLoaded = true;
+
+        await sleep(1000);
+        var createExternalLinkButton = document.getElementById(
+          `${collectionId}-Create-external-link`
+        );
+        console.log(collectionId + "-Create-external-link");
+        console.log(createExternalLinkButton);
+        createExternalLinkButton?.addEventListener(
+          "change",
+          createLinkEventHandler
+        );
+
+        //gtm push for clicking the header button
         window.dataLayer.push({
           event: "sharePublicCollection",
           //entityId: context.options.entityId,
@@ -42,16 +68,6 @@ export default function createExternal(container: any) {
           collectionId: collectionId,
         });
         //console.log(window.dataLayer);
-      };
-
-      createLinkEventHandler = (event) => {
-        console.log("Create external link checkbox clicked");
-        window.dataLayer.push({
-          event: "createExternalLinkPublicCollection",
-          definitionName: "createExternalLinkPublicCollection", //event.detail.definitionName,
-          description: "create external link for Public Collection",
-          collectionId: collectionId,
-        });
       };
 
       copyLinkEventHandler = (event) => {
@@ -85,13 +101,25 @@ export default function createExternal(container: any) {
       //   )[0];
       //   headerButton?.addEventListener("click", shareLinkEventHandler);
 
-      const createExternalLinkButton = document.getElementById(
-        collectionId + "-Create-external-link"
-      );
-      createExternalLinkButton?.addEventListener(
-        "change",
-        createLinkEventHandler
-      );
+      //   const createExternalLinkButton = document.getElementById(
+      //     collectionId + "-Create-external-link"
+      //   );
+      //   createExternalLinkButton?.addEventListener(
+      //     "change",
+      //     createLinkEventHandler
+      //   );
+
+      //   while (popupLoaded) {
+      //     console.log("popup open");
+      //   }
+
+      //   const createExternalLinkButton = document.getElementById(
+      //     collectionId + "-Create-external-link"
+      //   );
+      //   createExternalLinkButton?.addEventListener(
+      //     "change",
+      //     createLinkEventHandler
+      //   );
 
       const copyLinkButton = document.querySelectorAll(
         "[data-testid='copy-external-link']"
@@ -107,4 +135,8 @@ export default function createExternal(container: any) {
       removeListener();
     },
   };
+}
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
