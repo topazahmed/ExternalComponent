@@ -1,7 +1,3 @@
-//import React from "react";
-//import ReactDOM from "react-dom";
-
-//const OptionsContext = React.createContext<any>(null);
 declare global {
   interface Window {
     dataLayer: any;
@@ -26,14 +22,12 @@ export default function createExternal(container: any) {
   console.log("Custom external react component loaded!");
   var collectionId = location.pathname.split("/").pop();
   console.log("Collection id: " + collectionId);
-  //var popupLoaded = false;
 
   return {
     render: (context: { options: { entityId: any } }) => {
       removeListener();
 
       //modal loaded so check the checkbox
-      //console.log("found create link checkbox: " + createExternalLinkButton);
       createLinkEventHandler = (event: any) => {
         console.log("Create external link checkbox clicked");
         window.dataLayer.push({
@@ -46,14 +40,11 @@ export default function createExternal(container: any) {
 
       shareLinkEventHandler = async (event) => {
         console.log("Share link button clicked");
-        //popupLoaded = true;
 
         await sleep(1000);
         var createExternalLinkButton = document.getElementById(
           `${collectionId}-Create-external-link`
         );
-        console.log(collectionId + "-Create-external-link");
-        console.log(createExternalLinkButton);
         createExternalLinkButton?.addEventListener(
           "change",
           createLinkEventHandler
@@ -95,31 +86,6 @@ export default function createExternal(container: any) {
       document
         .querySelectorAll("[data-testid='sharePublicCollection']")[0]
         ?.addEventListener("click", shareLinkEventHandler);
-
-      //   const headerButton = document.querySelectorAll(
-      //     "[data-testid='sharePublicCollection']"
-      //   )[0];
-      //   headerButton?.addEventListener("click", shareLinkEventHandler);
-
-      //   const createExternalLinkButton = document.getElementById(
-      //     collectionId + "-Create-external-link"
-      //   );
-      //   createExternalLinkButton?.addEventListener(
-      //     "change",
-      //     createLinkEventHandler
-      //   );
-
-      //   while (popupLoaded) {
-      //     console.log("popup open");
-      //   }
-
-      //   const createExternalLinkButton = document.getElementById(
-      //     collectionId + "-Create-external-link"
-      //   );
-      //   createExternalLinkButton?.addEventListener(
-      //     "change",
-      //     createLinkEventHandler
-      //   );
 
       const copyLinkButton = document.querySelectorAll(
         "[data-testid='copy-external-link']"
