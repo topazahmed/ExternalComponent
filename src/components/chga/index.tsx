@@ -49,26 +49,6 @@ export default async function createExternal(container: any) {
     );
   };
 
-  const shareLinkEventHandler = async (event: any) => {
-    console.log("Share link button clicked");
-
-    await sleep(1000);
-    var createExternalLinkButton = document.getElementById(
-      `${entityId}-Create-external-link`
-    );
-    createExternalLinkButton?.addEventListener(
-      "change",
-      createLinkEventHandler
-    );
-
-    pushToGoogle(
-      "Share_Collection_Link",
-      "Share link Clicked for public collection id: " + entityId,
-      entityType,
-      entityId
-    );
-  };
-
   const shareEmailEventHandler = (event: any) => {
     console.log("Send Email popup open");
 
@@ -102,6 +82,26 @@ export default async function createExternal(container: any) {
     pushToGoogle(
       "Send_Email",
       "Sending email to: " + emails.replaceAll("\n", ","),
+      entityType,
+      entityId
+    );
+  };
+
+  const shareLinkEventHandler = async (event: any) => {
+    console.log("Share link button clicked");
+
+    await sleep(1000);
+    var createExternalLinkButton = document.getElementById(
+      `${entityId}-Create-external-link`
+    );
+    createExternalLinkButton?.addEventListener(
+      "change",
+      createLinkEventHandler
+    );
+
+    pushToGoogle(
+      "Share_Collection_Link",
+      "Share link Clicked for public collection id: " + entityId,
       entityType,
       entityId
     );
@@ -144,6 +144,14 @@ export default async function createExternal(container: any) {
     if (shareAssetEmail) {
       shareAssetEmail?.addEventListener("click", shareAssetByEmailEventHandler);
     }
+
+    var shareLinkButton = document.querySelectorAll(
+      "[data-testid='sharePublicCollection'][aria-label='Share link']"
+    )[0];
+    console.log(shareLinkButton);
+    if (shareLinkButton) {
+      shareLinkButton?.addEventListener("click", shareLinkEventHandler);
+    }
   });
 
   observer.observe(document, {
@@ -152,11 +160,7 @@ export default async function createExternal(container: any) {
   });
 
   return {
-    render: async (context: { options: { entityId: any } }) => {
-      document
-        .querySelectorAll("[data-testid='sharePublicCollection']")[0]
-        ?.addEventListener("click", shareLinkEventHandler);
-    },
+    render: async (context: { options: { entityId: any } }) => {},
     unmount: () => {
       console.log("External component unmounted");
     },
