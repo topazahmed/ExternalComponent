@@ -148,7 +148,6 @@ export default async function createExternal(container: any) {
     var shareLinkButton = document.querySelectorAll(
       "[data-testid='sharePublicCollection'][aria-label='Share link']"
     )[0];
-    console.log(shareLinkButton);
     if (shareLinkButton) {
       shareLinkButton?.addEventListener("click", shareLinkEventHandler);
     }
